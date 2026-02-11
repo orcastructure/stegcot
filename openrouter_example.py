@@ -2,6 +2,8 @@ import os
 import requests
 from dotenv import load_dotenv
 
+from eval_constants import DEFAULT_MODEL
+
 
 load_dotenv()
 
@@ -15,7 +17,7 @@ headers = {
     "Content-Type": "application/json",
 }
 payload = {
-    "model": "openai/gpt-4o-mini",
+    "model": DEFAULT_MODEL,
     "messages": [
         {"role": "user", "content": "Say hello in one short sentence."}
     ],

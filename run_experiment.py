@@ -9,14 +9,15 @@ from pathlib import Path
 from typing import Any
 
 from eval_constants import (
+    DEFAULT_MODEL,
     EVENTS_FILE_NAME,
     EXPERIMENT_NAME,
     EXPERIMENT_OUTPUT_DIR,
-    OPTIONAL_PROMPT_PART_1,
-    OPTIONAL_PROMPT_PART_2,
     REQUIRED_TASK_INSTRUCTION,
     RUNS_DIR_NAME,
     STATE_FILE_NAME,
+    STYLE_INSTRUCTION_1,
+    STYLE_INSTRUCTION_2,
     STEPS_DIR_NAME,
 )
 from openrouter_client import OpenRouterClient, OpenRouterConfig
@@ -55,13 +56,13 @@ def load_questions(dataset_path: Path) -> list[dict[str, Any]]:
     return normalized
 
 
-def compose_prompt(question_text: str, optional_part_1: str, optional_part_2: str) -> str:
+def compose_prompt(question_text: str, style_instruction_1: str, style_instruction_2: str) -> str:
     parts = [REQUIRED_TASK_INSTRUCTION]
-    if optional_part_1.strip():
-        parts.append(optional_part_1.strip())
+    if style_instruction_1.strip():
+        parts.append(style_instruction_1.strip())
     parts.append(question_text.strip())
-    if optional_part_2.strip():
-        parts.append(optional_part_2.strip())
+    if style_instruction_2.strip():
+        parts.append(style_instruction_2.strip())
     return "\n\n".join(parts)
 
 
@@ -120,6 +121,7 @@ def init_or_resume_run(
         "run_id": run_id,
         "experiment": EXPERIMENT_NAME,
         "dataset_path": str(dataset_path),
+        "question_set": dataset_path.stem,
         "model": model,
         "started_at": now_iso(),
         "updated_at": now_iso(),
@@ -135,8 +137,8 @@ def init_or_resume_run(
 
 def run_eval(
     dataset_path: Path,
-    optional_part_1: str,
-    optional_part_2: str,
+    style_instruction_1: str,
+    style_instruction_2: str,
     new_run: bool,
     model: str,
     temperature: float,
@@ -144,6 +146,7 @@ def run_eval(
     max_tokens: int,
 ) -> None:
     questions = load_questions(dataset_path)
+    question_set = dataset_path.stem
     run_dir, state = init_or_resume_run(
         dataset_path=dataset_path,
         total_questions=len(questions),
@@ -185,7 +188,7 @@ def run_eval(
         if step_file.exists():
             continue
 
-        prompt = compose_prompt(question["text"], optional_part_1, optional_part_2)
+        prompt = compose_prompt(question["text"], style_instruction_1, style_instruction_2)
         append_event(
             run_dir,
             "question_started",
@@ -196,29 +199,31 @@ def run_eval(
         )
 
         response_json = client.chat_completion(user_prompt=prompt)
-        content = (
-            response_json.get("choices", [{}])[0]
-            .get("message", {})
-            .get("content", "")
-            .strip()
-        )
+        message = response_json.get("choices", [{}])[0].get("message", {})
+        content = message.get("content", "").strip()
+        reasoning = message.get("reasoning")
 
         record = {
             "status": "completed",
             "completed_at": now_iso(),
+            "question_set": question_set,
             "question": question,
             "prompt": {
                 "required_instruction": REQUIRED_TASK_INSTRUCTION,
-                "optional_part_1": optional_part_1,
+                "style_instruction_1": style_instruction_1,
                 "question_text": question["text"],
-                "optional_part_2": optional_part_2,
+                "style_instruction_2": style_instruction_2,
                 "full_prompt": prompt,
             },
             "model_output": content,
+            "model_reasoning": reasoning,
             "score": None,
             "raw_response": response_json,
         }
         step_file.write_text(json.dumps(record, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
+
+        print(f"Q{question['number']} OUTPUT: {content}")
+        print(f"Q{question['number']} REASONING: {reasoning}")
 
         completed_numbers = set(state.get("completed_numbers", []))
         completed_numbers.add(question["number"])
@@ -248,18 +253,22 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run a resumable OpenRouter math eval.")
     parser.add_argument("--dataset", default="data/sprint.json", help="Path to dataset JSON file.")
     parser.add_argument(
+        "--style-instruction-1",
         "--optional-part-1",
-        default=OPTIONAL_PROMPT_PART_1,
-        help="Optional prompt text inserted before the question.",
+        dest="style_instruction_1",
+        default=STYLE_INSTRUCTION_1,
+        help="Style instruction inserted before the question.",
     )
     parser.add_argument(
+        "--style-instruction-2",
         "--optional-part-2",
-        default=OPTIONAL_PROMPT_PART_2,
-        help="Optional prompt text inserted after the question.",
+        dest="style_instruction_2",
+        default=STYLE_INSTRUCTION_2,
+        help="Style instruction inserted after the question.",
     )
     parser.add_argument("--new-run", action="store_true", help="Start a new run instead of resuming latest.")
 
-    parser.add_argument("--model", default="openai/gpt-4o-mini", help="OpenRouter model id.")
+    parser.add_argument("--model", default=DEFAULT_MODEL, help="OpenRouter model id.")
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--top-p", type=float, default=1.0)
     parser.add_argument("--max-tokens", type=int, default=256)
@@ -270,8 +279,8 @@ def main() -> None:
     args = parse_args()
     run_eval(
         dataset_path=Path(args.dataset),
-        optional_part_1=args.optional_part_1,
-        optional_part_2=args.optional_part_2,
+        style_instruction_1=args.style_instruction_1,
+        style_instruction_2=args.style_instruction_2,
         new_run=args.new_run,
         model=args.model,
         temperature=args.temperature,
