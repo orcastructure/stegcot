@@ -1,0 +1,44 @@
+{
+  "target_round": [
+    {
+      "number": 1,
+      "text": "An isosceles trapezoid has bases of length 15 inches and 21 inches and a height of 4 inches. What is the perimeter of this trapezoid?",
+      "final_answer": 46
+    },
+    {
+      "number": 2,
+      "text": "While practicing for MATHCOUNTS, Eli attempted to add the first ten positive integers, accidentally left one out and ended up with a perfect square. Which number did Eli leave out?",
+      "final_answer": 6
+    },
+    {
+      "number": 3,
+      "text": "Two perpendicular lines intersect at the point A(2, 5). If the y-intercept of one of the lines is 7, what is the y-intercept of the other line?",
+      "final_answer": 3
+    },
+    {
+      "number": 4,
+      "text": "Amanda is thinking of a positive integer. The sum of the distinct prime factors of her integer is 10 and her integer is less than 100. What is the sum of the possible values of Amanda’s integer?",
+      "final_answer": 264
+    },
+    {
+      "number": 5,
+      "text": "How many integers x satisfy the inequality |x + 2| ≤ 6?",
+      "final_answer": 13
+    },
+    {
+      "number": 6,
+      "text": "What is the sum of the three smallest positive integers that are both a multiple of 5 and also 1 more than a multiple of 7?",
+      "final_answer": 150
+    },
+    {
+      "number": 7,
+      "text": "A triangular number is a positive integer of the form 1 + 2 + 3 + … + n for some positive integer n. What is the positive difference between the 8th triangular number and the 6th triangular number?",
+      "final_answer": 15
+    },
+    {
+      "number": 8,
+      "text": "An equilateral triangle has one vertex on the positive x-axis, one vertex on the positive y-axis and one vertex at (20, 25). What is the area of the triangle in square units? Express your answer as a decimal to the nearest hundredth.",
+      "final_answer": 275.35
+    }
+  ]
+}

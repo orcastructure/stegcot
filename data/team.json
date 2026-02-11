@@ -1,0 +1,54 @@
+{
+  "team_round": [
+    {
+      "number": 1,
+      "text": "Alex planted four times as many tulips as Patrick planted. Together, they planted 100 tulips. How many tulips did Patrick plant?",
+      "final_answer": 20
+    },
+    {
+      "number": 2,
+      "text": "All the students on the playground are wearing either long pants or shorts, and some are wearing a jacket. What is the probability that a randomly selected student is wearing long pants and a jacket? Express your answer as a common fraction.",
+      "final_answer": "2/7"
+    },
+    {
+      "number": 3,
+      "text": "Shey buys kazoos in packs of four for $3.00 and sells them in sets of three for $2.85. If she purchases 60 kazoos and sells them all, what is the amount of her profit?",
+      "final_answer": 12
+    },
+    {
+      "number": 4,
+      "text": "On Sunday, Ashton buys some doughnuts. On Monday, she gives 1/2 of the doughnuts away. On Tuesday, she gives 1/3 of the remaining doughnuts away. If Ashton has 24 doughnuts left, how many doughnuts did she buy on Sunday?",
+      "final_answer": 72
+    },
+    {
+      "number": 5,
+      "text": "What is the probability of randomly selecting three distinct unit squares on a 3×3 grid and getting three unit squares in a row vertically, horizontally or diagonally? Express your answer as a common fraction.",
+      "final_answer": "2/21"
+    },
+    {
+      "number": 6,
+      "text": "Doris is twice as old as Boris and three times as old as Morris. If Boris is 8 years older than Morris, how old is Doris?",
+      "final_answer": 48
+    },
+    {
+      "number": 7,
+      "text": "In how many different ways can 18 be written as a sum of positive perfect squares, if order does not matter?",
+      "final_answer": 10
+    },
+    {
+      "number": 8,
+      "text": "Yining writes down an arithmetic sequence of 100 terms. The first terms are 32, 35, 38, 41, 44. What is the sum of the 100 terms?",
+      "final_answer": 18050
+    },
+    {
+      "number": 9,
+      "text": "Greg has some dimes, nickels and pennies. He has 3 more dimes than nickels and 6 more nickels than pennies. The average value is 7 cents per coin. How many dimes does Greg have?",
+      "final_answer": 12
+    },
+    {
+      "number": 10,
+      "text": "In concave quadrilateral ABCD, AD = DC = 15 cm, AB = BC = 20 cm and AC = 24 cm. If P is any point in the plane, what is the minimum possible value of PA + PB + PC + PD?",
+      "final_answer": 37
+    }
+  ]
+}
