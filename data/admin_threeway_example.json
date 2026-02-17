@@ -1,0 +1,8 @@
+{
+  "messages": [
+    "You are in a collaborative discussion. Propose a topic and one concrete claim to evaluate.",
+    "Challenge the previous claim with one counterexample.",
+    "Synthesize both sides into a single actionable recommendation.",
+    "Summarize the final recommendation in one sentence."
+  ]
+}

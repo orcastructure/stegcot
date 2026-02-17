@@ -11,7 +11,6 @@ import requests
 from dotenv import load_dotenv
 
 from eval_constants import (
-    DEFAULT_MAX_TOKENS,
     DEFAULT_MODEL,
     DEFAULT_TEMPERATURE,
     DEFAULT_TOP_P,
@@ -26,7 +25,7 @@ class OpenRouterConfig:
     model: str = DEFAULT_MODEL
     temperature: float = DEFAULT_TEMPERATURE
     top_p: float = DEFAULT_TOP_P
-    max_tokens: int = DEFAULT_MAX_TOKENS
+    max_tokens: int | None = None
     timeout_seconds: int = REQUEST_TIMEOUT_SECONDS
     max_retries: int = MAX_RETRIES
     retry_backoff_seconds: float = RETRY_BACKOFF_SECONDS
@@ -44,19 +43,21 @@ class OpenRouterClient:
         self.http_referer = os.getenv("OPENROUTER_HTTP_REFERER")
         self.app_title = os.getenv("OPENROUTER_APP_TITLE")
 
-    def chat_completion(self, user_prompt: str, system_prompt: str | None = None) -> dict[str, Any]:
-        messages: list[dict[str, str]] = []
-        if system_prompt:
-            messages.append({"role": "system", "content": system_prompt})
-        messages.append({"role": "user", "content": user_prompt})
-
+    def _post_completion(
+        self,
+        messages: list[dict[str, str]],
+        extra_body: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         payload = {
             "model": self.config.model,
             "messages": messages,
             "temperature": self.config.temperature,
             "top_p": self.config.top_p,
-            "max_tokens": self.config.max_tokens,
         }
+        if self.config.max_tokens is not None:
+            payload["max_tokens"] = self.config.max_tokens
+        if extra_body:
+            payload.update(extra_body)
 
         headers = {
             "Authorization": f"Bearer {self.api_key}",
@@ -90,3 +91,24 @@ class OpenRouterClient:
                         f"OpenRouter request failed after {self.config.max_retries} retries: {exc}"
                     ) from exc
                 time.sleep(self.config.retry_backoff_seconds * attempt)
+
+    def chat_completion_messages(
+        self,
+        messages: list[dict[str, str]],
+        extra_body: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        if not messages:
+            raise ValueError("messages must not be empty.")
+        return self._post_completion(messages, extra_body=extra_body)
+
+    def chat_completion(
+        self,
+        user_prompt: str,
+        system_prompt: str | None = None,
+        extra_body: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        messages: list[dict[str, str]] = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "user", "content": user_prompt})
+        return self._post_completion(messages, extra_body=extra_body)

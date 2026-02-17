@@ -1,0 +1,19 @@
+{
+  "game_9f86d081_prime": {
+    "hider": [
+      {
+        "round": 1,
+        "reasoning_file": "experiment_outputs/mock.txt",
+        "output": {
+          "primes": [999983, 1009],
+          "product": 1008982847
+        }
+      }
+    ],
+    "solver": []
+  },
+  "game_5f4dcc3b_wordsum": {
+    "hider": [],
+    "solver": []
+  }
+}
