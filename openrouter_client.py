@@ -26,7 +26,7 @@ class OpenRouterConfig:
     model: str = DEFAULT_MODEL
     temperature: float = DEFAULT_TEMPERATURE
     top_p: float = DEFAULT_TOP_P
-    max_tokens: int = DEFAULT_MAX_TOKENS
+    max_tokens: int | None = DEFAULT_MAX_TOKENS
     timeout_seconds: int = REQUEST_TIMEOUT_SECONDS
     max_retries: int = MAX_RETRIES
     retry_backoff_seconds: float = RETRY_BACKOFF_SECONDS
@@ -50,13 +50,14 @@ class OpenRouterClient:
             messages.append({"role": "system", "content": system_prompt})
         messages.append({"role": "user", "content": user_prompt})
 
-        payload = {
+        payload: dict[str, Any] = {
             "model": self.config.model,
             "messages": messages,
             "temperature": self.config.temperature,
             "top_p": self.config.top_p,
-            "max_tokens": self.config.max_tokens,
         }
+        if self.config.max_tokens is not None:
+            payload["max_tokens"] = self.config.max_tokens
 
         headers = {
             "Authorization": f"Bearer {self.api_key}",

@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from eval_constants import (
+    DEFAULT_MAX_TOKENS,
     DEFAULT_MODEL,
     EVENTS_FILE_NAME,
     EXPERIMENT_NAME,
@@ -143,7 +144,7 @@ def run_eval(
     model: str,
     temperature: float,
     top_p: float,
-    max_tokens: int,
+    max_tokens: int | None,
 ) -> None:
     questions = load_questions(dataset_path)
     question_set = dataset_path.stem
@@ -271,7 +272,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model", default=DEFAULT_MODEL, help="OpenRouter model id.")
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--top-p", type=float, default=1.0)
-    parser.add_argument("--max-tokens", type=int, default=256)
+    parser.add_argument("--max-tokens", type=int, default=DEFAULT_MAX_TOKENS)
     return parser.parse_args()
 
 

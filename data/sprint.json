@@ -1,9 +1,11 @@
 {
-  "problems": [
+  "sprint_round": [
     { "number": 1, "text": "What is the value of 2 + (2 × 2) + (2 × 2 × 2)?", "final_answer": 11 },
     { "number": 2, "text": "The value of a word is the sum of the values of all letters in the word. The value of each vowel (A, E, I, O, U) is 8 and the value of each consonant is 5, so the value of the word HAPPY is 5 + 8 + 5 + 5 + 5 = 28. What is the value of the word MATHCOUNTS?", "final_answer": 55 },
     { "number": 3, "text": "What value of x satisfies x × y = 36, if y = 12?", "final_answer": 3 },
+    { "number": 4, "text": "The fair spinner shown is divided into five equal sections. What is the probability that the spinner will land on a multiple of 6? Express your answer as a common fraction.", "final_answer": "2/5" },
     { "number": 5, "text": "Ed is two years older than Al. Ben is five years younger than Al. How many years older than Ben is Ed?", "final_answer": 7 },
+    { "number": 6, "text": "If (12 − ♥)/3 = 1, what is the value of ♥?", "final_answer": 9 },
     { "number": 7, "text": "A rectangle has a width of 10 cm and a length of 15 cm. If each side is doubled in length, what is the area of the new rectangle?", "final_answer": 600 },
     { "number": 8, "text": "If Andrea randomly chooses two distinct elements from the set {1, 2, 3, 4}, what is the sum of the least possible and greatest possible products?", "final_answer": 14 },
     { "number": 10, "text": "A sphere is inscribed in a cube with an edge length of 6 cm. What is the volume of this sphere if V = (4/3)πr^3? Express your answer in terms of π.", "final_answer": "36π" },
@@ -16,12 +18,13 @@
     { "number": 19, "text": "The average of ten numbers is 9.5. If 1 is added to the first number, 2 is added to the second, 3 is added to the third and so on until 10 is added to the tenth, what is the average of the 10 new numbers?", "final_answer": 15 },
     { "number": 20, "text": "If m and n are positive integers such that m^n = 64, what is the sum of all possible values of m + n?", "final_answer": 90 },
     { "number": 21, "text": "Atem has 5 different sized matchsticks whose lengths are positive integer number of centimeters. No three can be arranged to form the sides of a triangle. What is the least possible sum of the lengths of all Atem’s matchsticks?", "final_answer": 19 },
-    { "number": 22, "text": "Suppose x is a real number such that 2^x = x + 3. What is the value of the expression (2x)/(x + 3)?", "final_answer": 8 },
-    { "number": 23, "text": "When √6 + 2√5 is written in simplest radical form as a + b√c, where a and b are positive integers, what is the value of a + b?", "final_answer": 6 },
+    { "number": 22, "text": "Suppose x is a real number such that 2^x = x + 3. What is the value of (2^(x+3))/(x + 3)?", "final_answer": 8 },
+    { "number": 23, "text": "When √(6 + 2√5) is written in simplest radical form as a + √b, where a and b are positive integers, what is the value of a + b?", "final_answer": 6 },
     { "number": 24, "text": "How many ordered pairs of positive integers (m, n) are there with n ≤ 10 and where 2/3 ≤ m/n < 1?", "final_answer": 11 },
     { "number": 26, "text": "How many ordered triples of odd positive integers (a, b, c) are there for which a + b + c = 49 and a < b < c?", "final_answer": 44 },
-    { "number": 27, "text": "Let 2^n be the greatest power of 2 that divides the expression shown. What is the value of n? 1×2×3×4 + 2×3×4×5 + 3×4×5×6 + ⋯ + 25×26×27×28", "final_answer": 3 },
+    { "number": 27, "text": "Let 2^n be the greatest power of 2 that divides: 1×2×3×4 + 2×3×4×5 + 3×4×5×6 + ⋯ + 25×26×27×28. What is n?", "final_answer": 3 },
     { "number": 28, "text": "What is the first non-zero digit of 7^(5/2) that appears after the decimal point?", "final_answer": 6 },
-    { "number": 29, "text": "How many ordered pairs of positive integers (a, b) satisfy 7ab/(a + b) = 2025?", "final_answer": 8 }
+    { "number": 29, "text": "How many ordered pairs of positive integers (a, b) satisfy 7ab/(a + b) = 2025?", "final_answer": 8 },
+    { "number": 30, "text": "Tetrahedron ABCD with volume 2025 cm^3 has segment BD perpendicular to plane ABC. Suppose that angle ABC = 90 degrees, angle DAB = 30 degrees and angle DCB = 60 degrees. What is BD? Express your answer in simplest radical form.", "final_answer": "3√3" }
   ]
 }
