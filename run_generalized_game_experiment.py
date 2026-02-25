@@ -383,6 +383,7 @@ def run() -> None:
     hider_schema, solver_schema = game_schemas(game["type"])
     hider_validator, solver_validator = get_game_validators(game)
     hide_reasoning = bool(settings["hide_ai_reasoning_from_opponent"])
+    reasoning_effort = settings.get("reasoning_effort", "none")
     max_turns = int(settings["max_rounds"]) * len(TURN_ORDER)
     append_event(run_dir, "run_started", {"run_id": state["run_id"]})
 
@@ -440,7 +441,8 @@ def run() -> None:
                     "response_format": {
                         "type": "json_schema",
                         "json_schema": {"name": "hider_turn", "strict": True, "schema": hider_schema},
-                    }
+                    },
+                    "reasoning": {"effort": reasoning_effort},
                 }
                 raw_response = hider_client.chat_completion(user_prompt=user_prompt, system_prompt=system_prompt, extra_body=extra_body)
                 msg = raw_response.get("choices", [{}])[0].get("message", {})
@@ -501,7 +503,8 @@ def run() -> None:
                     "response_format": {
                         "type": "json_schema",
                         "json_schema": {"name": "solver_turn", "strict": True, "schema": solver_schema},
-                    }
+                    },
+                    "reasoning": {"effort": reasoning_effort},
                 }
                 raw_response = solver_client.chat_completion(user_prompt=user_prompt, system_prompt=system_prompt, extra_body=extra_body)
                 msg = raw_response.get("choices", [{}])[0].get("message", {})

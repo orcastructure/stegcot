@@ -23,8 +23,8 @@ from eval_constants import (
 @dataclass
 class OpenRouterConfig:
     model: str = DEFAULT_MODEL
-    temperature: float = DEFAULT_TEMPERATURE
-    top_p: float = DEFAULT_TOP_P
+    temperature: float | None = DEFAULT_TEMPERATURE
+    top_p: float | None = DEFAULT_TOP_P
     max_tokens: int | None = None
     timeout_seconds: int = REQUEST_TIMEOUT_SECONDS
     max_retries: int = MAX_RETRIES
@@ -51,9 +51,11 @@ class OpenRouterClient:
         payload = {
             "model": self.config.model,
             "messages": messages,
-            "temperature": self.config.temperature,
-            "top_p": self.config.top_p,
         }
+        if self.config.temperature is not None:
+            payload["temperature"] = self.config.temperature
+        if self.config.top_p is not None:
+            payload["top_p"] = self.config.top_p
         if self.config.max_tokens is not None:
             payload["max_tokens"] = self.config.max_tokens
         if extra_body:
@@ -87,8 +89,11 @@ class OpenRouterClient:
                 return response.json()
             except (requests.Timeout, requests.ConnectionError, requests.HTTPError) as exc:
                 if attempt > self.config.max_retries:
+                    detail = str(exc)
+                    if isinstance(exc, requests.HTTPError) and exc.response is not None:
+                        detail = f"HTTP {exc.response.status_code}: {exc.response.text[:800]}"
                     raise RuntimeError(
-                        f"OpenRouter request failed after {self.config.max_retries} retries: {exc}"
+                        f"OpenRouter request failed after {self.config.max_retries} retries: {detail}"
                     ) from exc
                 time.sleep(self.config.retry_backoff_seconds * attempt)
 
