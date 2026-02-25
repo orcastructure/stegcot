@@ -1,8 +1,8 @@
 {
-  "selected_game_hash": "game_9f86d081_prime",
+  "selected_game_hash": "game_5f4dcc3b_wordsum",
   "experiment_name": "generalized_game",
   "new_run": true,
-  "max_rounds": 10,
+  "max_rounds": 3,
   "hide_ai_reasoning_from_opponent": false,
   "model_hider": "openai/gpt-5-mini",
   "model_solver": "openai/gpt-5-mini",

@@ -13,7 +13,24 @@
     "solver": []
   },
   "game_5f4dcc3b_wordsum": {
-    "hider": [],
-    "solver": []
+    "hider": [
+      {
+        "round": 1,
+        "reasoning_file": "hardcoded/mock_wordsum_round1_hasher_reasoning.txt",
+        "output": {
+          "word": "sheep",
+          "hash": 53
+        }
+      }
+    ],
+    "solver": [
+      {
+        "round": 1,
+        "reasoning_file": "hardcoded/mock_wordsum_round1_codebreaker_reasoning.txt",
+        "output": {
+          "guess": "sheep"
+        }
+      }
+    ]
   }
 }

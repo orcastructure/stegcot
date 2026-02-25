@@ -1,10 +1,10 @@
 """Shared constants for math eval experiments."""
 
 # OpenRouter request settings
-DEFAULT_MODEL = "openai/gpt-5-mini"
+DEFAULT_MODEL = "openai/gpt-5"
 DEFAULT_TEMPERATURE = 0.0
 DEFAULT_TOP_P = 1.0
-DEFAULT_MAX_TOKENS = 256
+DEFAULT_MAX_TOKENS = None
 REQUEST_TIMEOUT_SECONDS = 90
 MAX_RETRIES = 3
 RETRY_BACKOFF_SECONDS = 2.0

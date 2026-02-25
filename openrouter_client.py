@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from typing import Any
 
@@ -86,9 +87,12 @@ class OpenRouterClient:
                 response.raise_for_status()
                 return response.json()
             except (requests.Timeout, requests.ConnectionError, requests.HTTPError) as exc:
+                detail = ""
+                if isinstance(exc, requests.HTTPError) and exc.response is not None:
+                    detail = f" | response={exc.response.text[:500]}"
                 if attempt > self.config.max_retries:
                     raise RuntimeError(
-                        f"OpenRouter request failed after {self.config.max_retries} retries: {exc}"
+                        f"OpenRouter request failed after {self.config.max_retries} retries: {exc}{detail}"
                     ) from exc
                 time.sleep(self.config.retry_backoff_seconds * attempt)
 
@@ -112,3 +116,42 @@ class OpenRouterClient:
             messages.append({"role": "system", "content": system_prompt})
         messages.append({"role": "user", "content": user_prompt})
         return self._post_completion(messages, extra_body=extra_body)
+
+    def chat_completion_batch(
+        self,
+        requests_batch: list[dict[str, Any]],
+        max_workers: int,
+    ) -> list[dict[str, Any] | Exception]:
+        if max_workers < 1:
+            raise ValueError("max_workers must be >= 1.")
+        if not requests_batch:
+            return []
+
+        results: list[dict[str, Any] | Exception] = [RuntimeError("uninitialized")] * len(requests_batch)
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_index = {}
+            for idx, item in enumerate(requests_batch):
+                extra_body = item.get("extra_body")
+                if "messages" in item:
+                    messages = item["messages"]
+                    future = executor.submit(self.chat_completion_messages, messages=messages, extra_body=extra_body)
+                else:
+                    user_prompt = item.get("user_prompt")
+                    if not isinstance(user_prompt, str) or not user_prompt.strip():
+                        raise ValueError("Each batch item must include non-empty 'user_prompt' or 'messages'.")
+                    system_prompt = item.get("system_prompt")
+                    future = executor.submit(
+                        self.chat_completion,
+                        user_prompt=user_prompt,
+                        system_prompt=system_prompt,
+                        extra_body=extra_body,
+                    )
+                future_to_index[future] = idx
+
+            for future in as_completed(future_to_index):
+                idx = future_to_index[future]
+                try:
+                    results[idx] = future.result()
+                except Exception as exc:  # noqa: BLE001
+                    results[idx] = exc
+        return results

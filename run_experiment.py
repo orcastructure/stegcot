@@ -144,7 +144,10 @@ def run_eval(
     temperature: float,
     top_p: float,
     max_tokens: int | None,
+    workers: int,
 ) -> None:
+    if workers < 1:
+        raise ValueError("--workers must be >= 1.")
     questions = load_questions(dataset_path)
     question_set = dataset_path.stem
     run_dir, state = init_or_resume_run(
@@ -183,6 +186,7 @@ def run_eval(
 
     append_event(run_dir, "run_started", {"run_id": state["run_id"]})
 
+    pending_questions: list[dict[str, Any]] = []
     for question in questions:
         step_file = steps_dir / f"{question['index']:04d}_q{question['number']}.json"
         if step_file.exists():
@@ -197,8 +201,36 @@ def run_eval(
                 "question_number": question["number"],
             },
         )
+        pending_questions.append(
+            {
+                "question": question,
+                "prompt": prompt,
+                "step_file": step_file,
+            }
+        )
 
-        response_json = client.chat_completion(user_prompt=prompt)
+    batch_requests = [{"user_prompt": item["prompt"]} for item in pending_questions]
+    batch_results = client.chat_completion_batch(batch_requests=batch_requests, max_workers=workers)
+    failures: list[tuple[dict[str, Any], Exception]] = []
+    for item, batch_result in zip(pending_questions, batch_results):
+        question = item["question"]
+        prompt = item["prompt"]
+        step_file = item["step_file"]
+
+        if isinstance(batch_result, Exception):
+            append_event(
+                run_dir,
+                "question_failed",
+                {
+                    "question_index": question["index"],
+                    "question_number": question["number"],
+                    "error": str(batch_result),
+                },
+            )
+            failures.append((question, batch_result))
+            continue
+
+        response_json = batch_result
         message = response_json.get("choices", [{}])[0].get("message", {})
         content = message.get("content", "").strip()
         reasoning = message.get("reasoning")
@@ -241,6 +273,14 @@ def run_eval(
             },
         )
 
+    if failures:
+        state["status"] = "failed"
+        write_state(run_dir / STATE_FILE_NAME, state)
+        raise RuntimeError(
+            f"{len(failures)} OpenRouter request(s) failed. Example: "
+            f"Q{failures[0][0]['number']} -> {failures[0][1]}"
+        )
+
     state["status"] = "completed"
     write_state(run_dir / STATE_FILE_NAME, state)
     append_event(run_dir, "run_completed", {"run_id": state["run_id"]})
@@ -272,6 +312,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--top-p", type=float, default=1.0)
     parser.add_argument("--max-tokens", type=int, default=None)
+    parser.add_argument("--workers", type=int, default=1, help="Number of concurrent OpenRouter requests.")
     return parser.parse_args()
 
 
@@ -286,6 +327,7 @@ def main() -> None:
         temperature=args.temperature,
         top_p=args.top_p,
         max_tokens=args.max_tokens,
+        workers=args.workers,
     )
 
 

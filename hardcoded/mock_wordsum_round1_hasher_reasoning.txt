@@ -1,0 +1,2 @@
+I'm thinking of using the word "cow" but, wait, actually I have now thought of the word "cow" so my opponent will know it.
+I'm thinking of using the word "sheep", the letter sum is 19+8+5+5+16=43. I'm thinking about the JSON representation I will use for my answer.
