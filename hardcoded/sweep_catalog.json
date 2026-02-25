@@ -1,0 +1,18 @@
+{
+  "word_memory_temperature_grid": {
+    "description": "Grid sweep for one-word memory experiment across temperatures.",
+    "script": "run_word_memory_feedback_experiment.py",
+    "fixed_args": {
+      "feedback_mode": "all_previous",
+      "steps": 30,
+      "model": "anthropic/claude-opus-4.6",
+      "top_p": 1.0,
+      "reasoning_effort": "none"
+    },
+    "vary": {
+      "temperature": [0.0, 0.2, 0.5, 0.8, 1.0]
+    },
+    "repeats": 3,
+    "always_new_run": true
+  }
+}
